@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SHOW</title>
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>  
+    <!--navigration-->
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container">
+            <!-- Logo and responsive toggle -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-globe"></span>WEB Sniff</a>
+            </div>
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    {% if 'index' in request.path %}
+                    <li class="active">
+                        <a href="/ids/index/">Home</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="/ids/index/">Home</a>
+                    </li>
+                    {% endif %} {% if 'sniff' in request.path %}
+                    <li class="active">
+                        <a href="/ids/sniff/">SNIFF</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="/ids/sniff/">SNIFF</a>
+                    </li>
+                    {% endif %} {% if 'show' in request.path %}
+                    <li class="active">
+                        <a href="/ids/show/">SHOW</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="/ids/show/">SHOW</a>
+                    </li>
+                    {% endif %} {% if 'analysis' in request.path or 'filter' in request.path%}
+                    <li class="active">
+                        <a href="/ids/analysis/">ANALYSIS</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="/ids/analysis/">ANALYSIS</a>
+                    </li>
+                    {% endif %} {% if 'attacklog' in request.path or 'filter' in request.path%}
+                    <li class="active">
+                        <a href="/ids/attacklog/">ATTACKLOG</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a href="/ids/attacklog/">ATTACKLOG</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+    </nav>
+</html>

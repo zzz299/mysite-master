@@ -1,0 +1,877 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sniffer</title>
+    <!-- Bootstrap Styles-->
+    <link href="/static/assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link href="/static/assets/css/font-awesome.css" rel="stylesheet" />
+    <!-- Morris Chart Styles-->
+    <link href="/static/assets/js/morris/morris-0.4.3.min.css" rel="stylesheet" />
+    <!-- Custom Styles-->
+    <link href="/static/assets/css/custom-styles.css" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <link href='http://fonts.useso.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <meta charset="utf-8"><link rel="icon" href="https://static.jianshukeji.com/highcharts/images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            /* css 代码  */
+        </style>
+        <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+        <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+
+    <!-- 饼图-->
+    <meta charset="utf-8"><link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* css 代码  */
+    </style>
+    <script src="https://code.highcharts.com.cn/jquery/jquery-1.8.3.min.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+    <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+
+</head>
+
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/IDS/index/">Sniffer</a>
+            </div>
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>John Doe</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Today</em>
+                                    </span>
+                                </div>
+                                <div>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>John Smith</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                                </div>
+                                <div>Lorem Ipsum has been the industry's standard dummy text ever since an kwilnw...</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <strong>John Smith</strong>
+                                    <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                                </div>
+                                <div>Lorem Ipsum has been the industry's standard dummy text ever since the...</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>Read All Messages</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-messages -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-tasks">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 1</strong>
+                                        <span class="pull-right text-muted">60% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            <span class="sr-only">60% Complete (success)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 2</strong>
+                                        <span class="pull-right text-muted">28% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="28" aria-valuemin="0" aria-valuemax="100" style="width: 28%">
+                                            <span class="sr-only">28% Complete</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 3</strong>
+                                        <span class="pull-right text-muted">60% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            <span class="sr-only">60% Complete (warning)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 4</strong>
+                                        <span class="pull-right text-muted">85% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" style="width: 85%">
+                                            <span class="sr-only">85% Complete (danger)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Tasks</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-tasks -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-comment fa-fw"></i> New Comment
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                    <span class="pull-right text-muted small">12 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-envelope fa-fw"></i> Message Sent
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-tasks fa-fw"></i> New Task
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Alerts</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-alerts -->
+                </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="#"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+        </nav>
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+
+                    <li>
+                        <a href="/IDS/index" class="active-menu"><i class="fa fa-dashboard"></i> 攻击统计</a>
+                    </li>
+                    <!--<li>-->
+                        <!--<a href="ui-elements.html"><i class="fa fa-desktop"></i> UI Elements</a>-->
+                    <!--</li>-->
+					<li>
+                        <a href="/IDS/analysis"><i class="fa fa-bar-chart-o"></i> 图表分析</a>
+                    </li>
+                    <!--<li>-->
+                        <!--<a href="tab-panel.html"><i class="fa fa-qrcode"></i> Tabs & Panels</a>-->
+                    <!--</li>-->
+
+                    <li>
+                        <a href="/IDS/show"><i class="fa fa-table"></i> 数据包分析</a>
+                    </li>
+                    <li>
+                        <a href="/IDS/upload" ><i class="fa fa-edit"></i> 检测本地流量文件 </a>
+                    </li>
+
+
+                    <!--<li>-->
+                        <!--<a href="#"><i class="fa fa-sitemap"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>-->
+                        <!--<ul class="nav nav-second-level">-->
+                            <!--<li>-->
+                                <!--<a href="#">Second Level Link</a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a href="#">Second Level Link</a>-->
+                            <!--</li>-->
+                            <!--<li>-->
+                                <!--<a href="#">Second Level Link<span class="fa arrow"></span></a>-->
+                                <!--<ul class="nav nav-third-level">-->
+                                    <!--<li>-->
+                                        <!--<a href="#">Third Level Link</a>-->
+                                    <!--</li>-->
+                                    <!--<li>-->
+                                        <!--<a href="#">Third Level Link</a>-->
+                                    <!--</li>-->
+                                    <!--<li>-->
+                                        <!--<a href="#">Third Level Link</a>-->
+                                    <!--</li>-->
+
+                                <!--</ul>-->
+
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                    <!--<li>-->
+                        <!--<a href="empty.html"><i class="fa fa-fw fa-file"></i> Empty Page</a>-->
+                    <!--</li>-->
+                </ul>
+
+            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper">
+            <div id="page-inner">
+
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-header">
+                            入侵检测系统 <small>attack detection</small>
+                        </h1>
+                    </div>
+                </div>
+                <!-- /. ROW  -->
+
+                <div class="row">
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                        <div class="panel panel-primary text-center no-boder bg-color-green">
+                            <div class="panel-body">
+                                <i class="fa fa-bar-chart-o fa-5x"></i>
+                                <h3 id="SQLI">{{ sqlinject_num }}</h3>
+                            </div>
+                            <div class="panel-footer back-footer-green">
+                                SQL-injection
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                        <div class="panel panel-primary text-center no-boder bg-color-blue">
+                            <div class="panel-body">
+                                <i class="fa fa-shopping-cart fa-5x"></i>
+                                <h3 id="IPv6">{{ IPv6_DOS_num }}</h3>
+                            </div>
+                            <div class="panel-footer back-footer-blue">
+                                IPv6 DOS
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                        <div class="panel panel-primary text-center no-boder bg-color-red">
+                            <div class="panel-body">
+                                <i class="fa fa fa-comments fa-5x"></i>
+                                <h3 id="XSS">{{ xss_num }}</h3>
+                            </div>
+                            <div class="panel-footer back-footer-red">
+                                XSS
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                        <div class="panel panel-primary text-center no-boder bg-color-brown">
+                            <div class="panel-body">
+                                <i class="fa fa-users fa-5x"></i>
+                                <h3 id="CodeI">{{ codeinjection }}</h3>
+                            </div>
+                            <div class="panel-footer back-footer-brown">
+                                Code injection
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        var sql=setInterval(
+                            function () {
+                                $.ajax({
+                                    url:'/IDS/get_sqlinjection_nums/',//地址
+                                    dataType:'json',//数据类型
+                                    type:'GET',//类型
+                                    timeout:2000,//超时
+                                    //请求成功
+
+                                    success:function(data,status){
+
+                                        var sqlnum = document.getElementById("SQLI"),
+                                            IPv6attack = document.getElementById("IPv6"),
+                                            xssnum = document.getElementById("XSS"),
+                                            codeinum = document.getElementById("CodeI");
+                                        sqlnum.innerText = data['sqlinum'];
+                                        IPv6attack.innerText = data['IPv6'];
+                                        xssnum.innerText = data['xssnum'];
+                                        codeinum.innerText = data['codeinum'];
+                                        //alert(status);
+                                    },
+                                    //失败/超时
+                                    error:function(XMLHttpRequest,textStatus,errorThrown) {
+                                        alert(data);
+                                        if (textStatus === 'timeout') {
+                                            alert('請求超時');
+                                            setTimeout(function () {
+                                                alert('重新请求');
+                                            }, 100);
+                                        }
+                                        //alert(errorThrown);
+                                    }
+                                });
+
+                            },500
+                        );
+
+                    </script>
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <div class="col-md-9 col-sm-12 col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Dos攻击警报
+                                <div id="container" style="min-width:400px;height:400px"></div>
+                                    <script>
+                                    function activeLastPointToolip(chart) {
+                                            var points = chart.series[0].points;
+                                            var points1 = chart.series[1].points;
+                                            chart.tooltip.refresh(points[points.length -1]);
+                                            chart.tooltip.refresh(points1[points1.length -1]);
+                                    }
+                                    var chart = Highcharts.chart('container', {
+                                            chart: {
+                                                    //type: 'column',
+                                                    //type: 'area',
+                                                    //zoomType: 'x',
+                                                    type:'areaspline',
+                                                    marginRight: 10,
+                                                    events: {
+                                                            load: function () {
+
+                                                                    var series = this.series[0],
+                                                                        series1 = this.series[1],
+                                                                        series2 = this.series[2],
+                                                                    chart = this;
+
+                                                                    activeLastPointToolip(chart);
+                                                                    setInterval(function () {
+                                                                        $.ajax({
+                                                                        url:'/IDS/testecharts/',//地址
+                                                                        dataType:'json',//数据类型
+                                                                        type:'GET',//类型
+                                                                        timeout:2000,//超时
+                                                                        //请求成功
+
+                                                                        success:function(data,status){
+                                                                            //alert(data);
+                                                                            var x = (new Date()).getTime();// 当前时间
+                                                                            //var y = Math.random();          // 随机值
+                                                                            y = data;
+                                                                           // y = Math.random();
+                                                                            y1 = Math.random(1,100);
+                                                                            y2 = Math.random(1,100);
+                                                                            series2.addPoint([x, y2], true, false);
+                                                                            series.addPoint([x, y], true, false);
+                                                                            series1.addPoint([x, y1], true, false);
+
+                                                                            activeLastPointToolip(chart);
+                                                                            //alert(status);
+                                                                        },
+                                                                        //失败/超时
+                                                                        error:function(XMLHttpRequest,textStatus,errorThrown) {
+                                                                            alert(data);
+                                                                            if (textStatus === 'timeout') {
+                                                                                alert('請求超時');
+                                                                                setTimeout(function () {
+                                                                                    alert('重新请求');
+                                                                                }, 2000);
+                                                                            }
+                                                                            //alert(errorThrown);
+                                                                        }
+                                                                    });
+                                                                      /*      var x = (new Date()).getTime();// 当前时间
+                                                                            //var y = Math.random();          // 随机值
+                                                                            y = data;
+
+                                                                            series.addPoint([x, y], true, true);
+                                                                            activeLastPointToolip(chart);
+
+                                                                       */
+                                                                    }, 1000);
+
+                                                            }
+                                                    }
+                                            },
+                                            title: {
+                                                    text: '实时流量'
+                                            },
+                                            xAxis: {
+                                                    type: 'datetime',
+                                                    tickPixelInterval: 150
+                                            },
+                                            yAxis: {
+                                                    title: {
+                                                            text: null
+                                                    }
+                                            },
+                                            tooltip: {
+                                                    formatter: function () {
+                                                            return '<b>' + this.series.name + '</b><br/>' +
+                                                                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                                                                    Highcharts.numberFormat(this.y, 2);
+                                                    }
+                                            },
+                                            legend: {
+                                                    enabled: false
+                                            },
+                                            series: [{
+                                                    name: '流量大小',
+                                                    data: (function () {
+                                                            // 生成随机值
+                                                            var data = [],
+                                                                    time = (new Date()).getTime(),
+                                                                    i;
+                                                            for (i = 0; i <= 0; i += 1) {
+
+                                                                    data.push({
+                                                                            x: time + i * 1000,
+                                                                            y: null
+                                                                    });
+                                                            }
+
+
+                                                            return data;
+                                                    }())
+                                            },{
+                                                    name: 'SQL-injection 攻击流量',
+                                                    data: (function () {
+                                                            // 生成随机值
+                                                            var data = [],
+                                                                    time = (new Date()).getTime(),
+                                                                    i;
+                                                            for (i = 0; i <= 0; i += 1) {
+
+                                                                    data.push({
+                                                                            x: time + i * 1000,
+                                                                            y: null
+                                                                    });
+                                                            }
+                                                            return data;
+                                                    }())
+                                            },{
+                                                    name: 'XSS 攻击流量',
+                                                    data: (function () {
+                                                            // 生成随机值
+                                                            var data = [],
+                                                                    time = (new Date()).getTime(),
+                                                                    i;
+                                                            for (i = 0; i <= 0; i += 1) {
+
+                                                                    data.push({
+                                                                            x: time + i * 1000,
+                                                                            y: null
+                                                                    });
+                                                            }
+                                                            return data;
+                                                    }())
+                                            }
+
+                                            ]
+                                    });
+                                            </script>
+
+
+
+                            </div>
+                            <div class="panel-body">
+                                <div id="morris-bar-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-12 col-xs-12">
+                        <div class="panel panel-default">
+                            <!--<div class="panel-heading">
+
+                                <div id="container1" style="min-width:400px;height:400px"></div>
+                                Donut Chart Example
+                                <script>
+                                    function activeLastPointToolip(chart) {
+                                            var points = chart.series[0].points;
+                                            chart.tooltip.refresh(points[points.length -1]);
+                                    }
+
+                                    var pie = Highcharts.chart(id, {
+                                            credits: {
+                                                 enabled: false,                    //去掉版权信息
+                                             },
+                                            chart: {
+                                                    plotBackgroundColor: null,
+                                                    plotBorderWidth: null,
+                                                    plotShadow: false,
+                                                    type: 'pie'
+                                            },
+                                            title: {
+                                                    text: areaName+'保单操作总量及占比(%)'
+                                            },
+                                            tooltip: {
+                                                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                            },
+                                            plotOptions: {
+                                                    pie: {
+                                                            allowPointSelect: true,
+                                                            cursor: 'pointer',
+                                                            dataLabels: {
+                                                                    enabled: true
+                                                            },
+                                                            showInLegend: true
+                                                    }
+                                            },
+                                            series: [{
+                                                    name: 'Brands',
+                                                    colorByPoint: true,
+                                                    data: datas
+                                            }]
+                                    });
+
+                                </script>
+                            </div>
+                            -->
+                            <div class="panel-body">
+                                <div id="morris-donut-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /. ROW  -->
+<!--
+                <div class="row">
+                    <div class="col-md-4 col-sm-12 col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Tasks Panel
+                            </div>
+                            <div class="panel-body">
+                                <div class="list-group">
+
+                                    <a href="#" class="list-group-item">
+                                        <span class="badge">7 minutes ago</span>
+                                        <i class="fa fa-fw fa-comment"></i> Commented on a post
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <span class="badge">16 minutes ago</span>
+                                        <i class="fa fa-fw fa-truck"></i> Order 392 shipped
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <span class="badge">36 minutes ago</span>
+                                        <i class="fa fa-fw fa-globe"></i> Invoice 653 has paid
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <span class="badge">1 hour ago</span>
+                                        <i class="fa fa-fw fa-user"></i> A new user has been added
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <span class="badge">1.23 hour ago</span>
+                                        <i class="fa fa-fw fa-user"></i> A new user has added
+                                    </a>
+                                    <a href="#" class="list-group-item">
+                                        <span class="badge">yesterday</span>
+                                        <i class="fa fa-fw fa-globe"></i> Saved the world
+                                    </a>
+                                </div>
+                                <div class="text-right">
+                                    <a href="#">More Tasks <i class="fa fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+-->
+
+                <div class="row">
+                <div class="col-md-6 col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                             ATTACK LOGS
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Time</th>
+                                            <th>SRC</th>
+                                            <th>DST</th>
+                                            <th>ATTACK INFO</th>
+                                            <th>ATTACK TYPE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for res in attack_res %}
+                                            <tr class="success">
+                                                <td>{{res.0}}</td>
+                                                <td>{{res.1}}</td>
+                                                <td>{{res.2}}</td>
+                                                <td class="center">{{res.3}}</td>
+                                                <td class="center">{{res.4}}</td>
+                                                <td class="center">{{res.5}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                    </div>
+                </div>
+                    <!--End Advanced Tables -->
+                </div>
+            </div>
+                <!--
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Responsive Table Example
+                            </div>
+                                <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>S No.</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>User Name</th>
+                                                <th>Email ID.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>John</td>
+                                                <td>Doe</td>
+                                                <td>John15482</td>
+                                                <td>name@site.com</td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Kimsila</td>
+                                                <td>Marriye</td>
+                                                <td>Kim1425</td>
+                                                <td>name@site.com</td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>Rossye</td>
+                                                <td>Nermal</td>
+                                                <td>Rossy1245</td>
+                                                <td>name@site.com</td>
+                                            </tr>
+                                            <tr>
+                                                <td>4</td>
+                                                <td>Richard</td>
+                                                <td>Orieal</td>
+                                                <td>Rich5685</td>
+                                                <td>name@site.com</td>
+                                            </tr>
+                                            <tr>
+                                                <td>5</td>
+                                                <td>Jacob</td>
+                                                <td>Hielsar</td>
+                                                <td>Jac4587</td>
+                                                <td>name@site.com</td>
+                                            </tr>
+                                            <tr>
+                                                <td>6</td>
+                                                <td>Wrapel</td>
+                                                <td>Dere</td>
+                                                <td>Wrap4585</td>
+                                                <td>name@site.com</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div> -->
+                        </div>
+
+                    </div>
+                </div> -->
+
+
+
+                <!-- /. ROW  -->
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+    </div>
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    <script src="/static/assets/js/jquery-1.10.2.js"></script>
+    <!-- Bootstrap Js -->
+    <script src="/static/assets/js/bootstrap.min.js"></script>
+    <!-- Metis Menu Js -->
+    <script src="/static/assets/js/jquery.metisMenu.js"></script>
+    <!-- Morris Chart Js -->
+    <script src="/static/assets/js/morris/raphael-2.1.0.min.js"></script>
+    <script src="/static/assets/js/morris/morris.js"></script>
+    <script src="/static/assets/js/dataTables/jquery.dataTables.js"></script>
+    <script src="/static/assets/js/dataTables/dataTables.bootstrap.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+    <!-- Custom Js -->
+    <script src="/static/assets/js/custom-scripts.js"></script>
+
+
+
+<script>
+function loadXMLDoc()
+{
+	var xmlhttp;
+	if (window.XMLHttpRequest)
+	{
+		//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+		xmlhttp=new XMLHttpRequest();
+	}
+	else
+	{
+		// IE6, IE5 浏览器执行代码
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+		}
+	}
+	xmlhttp.open("GET","/IDS/upload/",true);
+	xmlhttp.send();
+}
+</script>
+<!--
+<div id="myDiv"><h2>使用 AJAX 修改该文本内容</h2></div>
+<button type="button" onclick="loadXMLDoc()">修改内容</button>
+
+<div id="container" style="min-width:400px;height:400px"></div>
+        <script>
+            Highcharts.setOptions({
+		global: {
+				useUTC: false
+		}
+});
+-->
+
+</body>
+
+</html>

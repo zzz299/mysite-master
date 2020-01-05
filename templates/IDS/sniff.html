@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sniff</title>
+    <link href="/static/css/sniff.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/js/jquery-3.2.1.js"></script>
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    {% include "./header.html" %}
+    <h2 align="center">You Can Sniff Some Pcaps</h2>
+    <div id="login">
+
+        <form action="/IDS/sniff/" method="post">
+            {% csrf_token %}
+
+            <h4>The Number of pcaps you need:</h4>
+            <input type="text" class="form-control" name="number">
+            <br/>
+            <button class="button" type="submit">Start</button>
+        </form>
+
+    </div>
+</body>
+
+
+
+</html>

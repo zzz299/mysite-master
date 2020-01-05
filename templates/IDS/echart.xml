@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--  Copyright w3school.com.cn -->
+<servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>test.TestServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>TestServlet</servlet-name>
+    <url-pattern>/TestServlet</url-pattern>
+</servlet-mapping>
