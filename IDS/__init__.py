@@ -59,6 +59,7 @@ def flood_router6(pcaps):
         con.close()
 def parasite6(pcaps):
     ndp_table=dict()
+    ndpmac_table=dict()
     countnum=0
     for pcap in pcaps:
         try:
@@ -67,6 +68,11 @@ def parasite6(pcaps):
                     ndp_table[pcap["IPv6"].src]=pcap["Ethernet"].src
                 else:
                     if ndp_table[pcap["IPv6"].src]!=pcap["Ethernet"].src:
+                        countnum=countnum+1
+                if pcap["Ethernet"].src not in ndpmac_table.keys():
+                    ndpmac_table[pcap["Ethernet"].src]=pcap["IPv6"].src
+                else:
+                    if ndpmac_table[pcap["Ethernet"].src]!=pcap["IPv6"].src:
                         countnum=countnum+1
         except:
             continue
