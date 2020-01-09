@@ -1,4 +1,5 @@
 from scapy.all import *
+
 type1={6:"TCP",58:"icmpv6",134:"RA",44:"fragment",0:"HopByHop",136:"NA",135:"NS",133:"RS",59:"No Next Header",17:"UDP"}
 def icmp(pcap):
     icmpv6 = dict()
@@ -8,9 +9,14 @@ def icmp(pcap):
         icmpv6["code"]=pcap["ICMPv6ND_RS"].code
         icmpv6["cksum"]=hex(pcap["ICMPv6ND_RS"].cksum)
         icmpv6["res"]=pcap["ICMPv6ND_RS"].res
-        icmpv6["optiontype"]=pcap["ICMPv6NDOptSrcLLAddr"].type
-        icmpv6["optionlen"]=pcap["ICMPv6NDOptSrcLLAddr"].len
-        icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
+        try:
+            icmpv6["optiontype"]=pcap["ICMPv6NDOptSrcLLAddr"].type
+            icmpv6["optionlen"]=pcap["ICMPv6NDOptSrcLLAddr"].len
+            icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
+        except:
+            icmpv6["optiontype"] = " "
+            icmpv6["optionlen"] = " "
+            icmpv6["lladdr"] = " "
     #解析RA报文
     elif pcap.haslayer("ICMPv6ND_RA"):
         icmpv6["type"]=type1[pcap["ICMPv6ND_RA"].type]
@@ -25,9 +31,14 @@ def icmp(pcap):
         icmpv6["routerlifetime"] = pcap["ICMPv6ND_RA"].routerlifetime
         icmpv6["reachabletime"] = pcap["ICMPv6ND_RA"].reachabletime
         icmpv6["retranstimer"] = pcap["ICMPv6ND_RA"].retranstimer
-        icmpv6["optiontype"] = pcap["ICMPv6NDOptSrcLLAddr"].type
-        icmpv6["optionlen"] = pcap["ICMPv6NDOptSrcLLAddr"].len
-        icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
+        try:
+            icmpv6["optiontype"] = pcap["ICMPv6NDOptSrcLLAddr"].type
+            icmpv6["optionlen"] = pcap["ICMPv6NDOptSrcLLAddr"].len
+            icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
+        except:
+            icmpv6["optiontype"] = " "
+            icmpv6["optionlen"] = " "
+            icmpv6["lladdr"] = " "
     #解析NS报文
     elif pcap.haslayer("ICMPv6ND_NS"):
         icmpv6["type"]=type1[pcap["ICMPv6ND_NS"].type]
@@ -35,9 +46,14 @@ def icmp(pcap):
         icmpv6["cksum"]=hex(pcap["ICMPv6ND_NS"].cksum)
         icmpv6["res"]=pcap["ICMPv6ND_NS"].res
         icmpv6["tgt"]=pcap["ICMPv6ND_NS"].tgt
-        icmpv6["optiontype"] = pcap["ICMPv6NDOptSrcLLAddr"].type
-        icmpv6["optionlen"] = pcap["ICMPv6NDOptSrcLLAddr"].len
-        icmpv6["lladdr"]=pcap["ICMPv6NDOptSrcLLAddr"].lladdr
+        try:
+            icmpv6["optiontype"] = pcap["ICMPv6NDOptSrcLLAddr"].type
+            icmpv6["optionlen"] = pcap["ICMPv6NDOptSrcLLAddr"].len
+            icmpv6["lladdr"]=pcap["ICMPv6NDOptSrcLLAddr"].lladdr
+        except:
+            icmpv6["optiontype"] = " "
+            icmpv6["optionlen"] = " "
+            icmpv6["lladdr"] = " "
     #解析NA报文
     elif pcap.haslayer("ICMPv6ND_NA"):
         icmpv6["type"] = type1[pcap["ICMPv6ND_NA"].type]
@@ -48,9 +64,14 @@ def icmp(pcap):
         icmpv6["S"] = pcap["ICMPv6ND_NA"].S
         icmpv6["O"] = pcap["ICMPv6ND_NA"].O
         icmpv6["tgt"] = pcap["ICMPv6ND_NA"].tgt
-        icmpv6["optiontype"] = pcap["ICMPv6NDOptDstLLAddr"].type
-        icmpv6["optionlen"] = pcap["ICMPv6NDOptDstLLAddr"].len
-        icmpv6["lladdr"] = pcap["ICMPv6NDOptDstLLAddr"].lladdr
+        try:
+            icmpv6["optiontype"] = pcap["ICMPv6NDOptDstLLAddr"].type
+            icmpv6["optionlen"] = pcap["ICMPv6NDOptDstLLAddr"].len
+            icmpv6["lladdr"] = pcap["ICMPv6NDOptDstLLAddr"].lladdr
+        except:
+            icmpv6["optiontype"] = " "
+            icmpv6["optionlen"] = " "
+            icmpv6["lladdr"] = " "
     else:
         icmpv6["type"]="no"
     return icmpv6
@@ -93,13 +114,12 @@ def judge(pcap):
         elif pcap["IPv6"].nh==58:
             icmpv6=icmp(pcap)
             print("icmpv6", icmpv6)
-# for i in range(5):
-#     pcap=sniff(iface="eth0",count=2)
-#     FILE = 'demo1.pcap'
-#     wrpcap(FILE, pcap)
-#     pcaps = rdpcap(FILE)
-#     for p in pcaps:
-#         if p.haslayer("IPv6"):
-#             judge(p)
-#         else :
-#             print("ddew")
+while(True):
+    stra='Apple Mobile Device Ethernet'
+    pcap=sniff(iface="Apple Mobile Device Ethernet",count=10)
+    # FILE = 'demo1.pcap'
+    # wrpcap(FILE, pcap)
+    # pcaps = rdpcap(FILE)
+    for p in pcap:
+        if p.haslayer("IPv6"):
+            judge(p)
