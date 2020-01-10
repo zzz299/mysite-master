@@ -9,14 +9,9 @@ def icmp(pcap):
         icmpv6["code"]=pcap["ICMPv6ND_RS"].code
         icmpv6["cksum"]=hex(pcap["ICMPv6ND_RS"].cksum)
         icmpv6["res"]=pcap["ICMPv6ND_RS"].res
-        try:
-            icmpv6["optiontype"]=pcap["ICMPv6NDOptSrcLLAddr"].type
-            icmpv6["optionlen"]=pcap["ICMPv6NDOptSrcLLAddr"].len
-            icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
-        except:
-            icmpv6["optiontype"] = " "
-            icmpv6["optionlen"] = " "
-            icmpv6["lladdr"] = " "
+        icmpv6["optiontype"]=pcap["ICMPv6NDOptSrcLLAddr"].type
+        icmpv6["optionlen"]=pcap["ICMPv6NDOptSrcLLAddr"].len
+        icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
     #解析RA报文
     elif pcap.haslayer("ICMPv6ND_RA"):
         icmpv6["type"]=type1[pcap["ICMPv6ND_RA"].type]
@@ -31,14 +26,9 @@ def icmp(pcap):
         icmpv6["routerlifetime"] = pcap["ICMPv6ND_RA"].routerlifetime
         icmpv6["reachabletime"] = pcap["ICMPv6ND_RA"].reachabletime
         icmpv6["retranstimer"] = pcap["ICMPv6ND_RA"].retranstimer
-        try:
-            icmpv6["optiontype"] = pcap["ICMPv6NDOptSrcLLAddr"].type
-            icmpv6["optionlen"] = pcap["ICMPv6NDOptSrcLLAddr"].len
-            icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
-        except:
-            icmpv6["optiontype"] = " "
-            icmpv6["optionlen"] = " "
-            icmpv6["lladdr"] = " "
+        icmpv6["optiontype"] = pcap["ICMPv6NDOptSrcLLAddr"].type
+        icmpv6["optionlen"] = pcap["ICMPv6NDOptSrcLLAddr"].len
+        icmpv6["lladdr"] = pcap["ICMPv6NDOptSrcLLAddr"].lladdr
     #解析NS报文
     elif pcap.haslayer("ICMPv6ND_NS"):
         icmpv6["type"]=type1[pcap["ICMPv6ND_NS"].type]
@@ -115,8 +105,7 @@ def judge(pcap):
             icmpv6=icmp(pcap)
             print("icmpv6", icmpv6)
 while(True):
-    stra='Apple Mobile Device Ethernet'
-    pcap=sniff(iface="Apple Mobile Device Ethernet",count=10)
+    pcap=sniff(iface="eth0",count=10)
     # FILE = 'demo1.pcap'
     # wrpcap(FILE, pcap)
     # pcaps = rdpcap(FILE)

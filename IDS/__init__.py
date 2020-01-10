@@ -40,20 +40,30 @@ def test_ipv6dos(pcaps):
         count=1
         if count==1:
             break
-def flood_router6(pcaps):
+def flood(pcaps):
     sumnum=len(pcaps)
-    countnum=0
+    routernum=0
+    nsnum=0
     for pcap in pcaps:
         if pcap.haslayer("IPv6"):
             try:
                 if pcap.haslayer("ICMPv6ND_RA"):
                     if pcap["IPv6"].dst=="ff02::1" and pcap["ICMPv6ND_RA"].type==134:
-                        countnum=countnum+1
+                        routernum=routernum+1
+                elif pcap.haslayer("ICMPv6ND_NS"):
+                    if pcap["IPv6"].dst=="ff02::1" and pcap["ICMPv6ND_NS"].type==135:
+                        nsnum=nsnum+1
             except:
                 continue
-    if countnum>((sumnum/3)*2):
+    if routernum>((sumnum/3)*2):
         con, cur = dbcur()
-        query = 'update ipv6_attack set floodrouter6_num= ' + str(countnum) + ' where id=0'
+        query = 'update ipv6_attack set flood_num= ' + str(routernum) + ' where id=0'
+        cur.execute(query)
+        con.commit()
+        con.close()
+    elif nsnum>((sumnum/3)*2):
+        con, cur = dbcur()
+        query = 'update ipv6_attack set flood_num= ' + str(nsnum) + ' where id=0'
         cur.execute(query)
         con.commit()
         con.close()
