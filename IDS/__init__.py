@@ -82,13 +82,13 @@ def flood(pcaps):
                 continue
     if countnum>((sumnum/3)*2):
         con, cur = dbcur()
-        query = 'update attack_check set ipv6_router_spoofer_check='+str(countnum)+' where id=0'
+        query = 'update attack_check set ipv6_flood_num='+str(countnum)+' where id=0'
         cur.execute(query)
         con.commit()
         con.close()
     else:
         con, cur = dbcur()
-        query = 'update attack_check set ipv6_router_spoofer_check=0 where id=0'
+        query = 'update attack_check set ipv6_flood_num=0 where id=0'
         cur.execute(query)
         con.commit()
         con.close()
