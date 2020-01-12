@@ -60,7 +60,7 @@ def get_attack_num(request):
         'IPv6':random.randint(1,10),
         'xssnum':xss_injextion_nums,
         'codeinum':random.randint(1,10),
-        'check_flood_router6': check_flood_router6,
+        'check_flood_router6': check_flood_num,
         'check_ndpspoofer':check_ndpspoofer,
         'check_ipv6_dos':check_ipv6_dos,
         'ipv6_dos_src':ipv6_dos_src,
