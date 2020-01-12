@@ -106,9 +106,6 @@ def judge(pcap):
             print("icmpv6", icmpv6)
 while(True):
     pcap=sniff(iface="eth0",count=10)
-    # FILE = 'demo1.pcap'
-    # wrpcap(FILE, pcap)
-    # pcaps = rdpcap(FILE)
     for p in pcap:
         if p.haslayer("IPv6"):
             judge(p)

@@ -1,10 +1,10 @@
 from scapy.all import sniff,rdpcap,wrpcap
-import os
 from IDS.db import *
 import multiprocessing
 import time
-from .views import analysis_http_attack,analysis,analysis_sql
 import operator
+from .views import analysis_http_attack,analysis,analysis_sql
+
 def analysis_pcap(pcaps):
     PCAPNUMS = len(pcaps)
     con, cur = dbcur()
@@ -14,6 +14,29 @@ def analysis_pcap(pcaps):
     con.commit()
     con.close()
     analysis(pcaps)
+
+def capture_pcap():
+
+    for i in range(100):  # os模块的getpid()可以获得该进程的进程号,os.ppid()可以获得该进程的父进程的进程号
+        print("---in %d" % (i))
+        pcap = sniff(iface='eth0',timeout=1)
+        FILE = 'demo.pcap'
+
+        wrpcap(FILE,pcap)
+        try:
+            pcaps = rdpcap(FILE)
+            q = multiprocessing.Process(target=analysis_pcap,args=(pcaps,))
+            q.daemon = True
+            q.start()
+            p = multiprocessing.Process(target=test_ipv6dos, args=(pcaps,))
+            p.daemon = True
+            p.start()
+
+        except:
+            continue
+    print("********\n***************\n**********\n*******\n***\n****\n****\n****\n*****\nfinish")
+
+
 def test_ipv6dos(pcaps):
     srclist=dict()
     for pcap in pcaps:
@@ -28,52 +51,57 @@ def test_ipv6dos(pcaps):
                     srclist[pcap['IPv6'].src]=srclist[pcap['IPv6'].src]+1
         except:
             continue
-    sorted= sorted(srclist.iteritems(), key=operator.itemgetter(1), reverse=True)
+    sorts= sorted(srclist.items(), key=operator.itemgetter(1), reverse=True)
     count=0
-    for key,value in sorted:
+    for key,value in sorts:
         if value > 500:
             con, cur = dbcur()
-            query = '''insert into ipv6dos(src,num) values(key,value)'''
+            query = 'update attack_check set ipv6_dos_src='+str(key)+',ipv6_dos_check='+str(value)+'where id=0'
             cur.execute(query)
             con.commit()
             con.close()
         count=1
         if count==1:
             break
-def flood(pcaps):
+
+    flood_router6(pcaps)
+
+def flood_router6(pcaps):
     sumnum=len(pcaps)
-    routernum=0
-    nsnum=0
+    countnum=0
     for pcap in pcaps:
         if pcap.haslayer("IPv6"):
             try:
                 if pcap.haslayer("ICMPv6ND_RA"):
                     if pcap["IPv6"].dst=="ff02::1" and pcap["ICMPv6ND_RA"].type==134:
-                        routernum=routernum+1
-                elif pcap.haslayer("ICMPv6ND_NS"):
-                    if pcap["IPv6"].dst=="ff02::1" and pcap["ICMPv6ND_NS"].type==135:
-                        nsnum=nsnum+1
+                        countnum=countnum+1
             except:
                 continue
-    if routernum>((sumnum/3)*2):
+    if countnum>((sumnum/3)*2):
         con, cur = dbcur()
-        query = 'update ipv6_attack set flood_num= ' + str(routernum) + ' where id=0'
+        query = 'update attack_check set ipv6_router_spoofer_check='+str(countnum)+' where id=0'
         cur.execute(query)
         con.commit()
         con.close()
-    elif nsnum>((sumnum/3)*2):
+    else:
         con, cur = dbcur()
-        query = 'update ipv6_attack set flood_num= ' + str(nsnum) + ' where id=0'
+        query = 'update attack_check set ipv6_router_spoofer_check=0 where id=0'
         cur.execute(query)
         con.commit()
         con.close()
+
+    parasite6(pcaps)
+
+
 def parasite6(pcaps):
     ndp_table=dict()
     ndpmac_table=dict()
     countnum=0
+    ipv6_num = 0
     for pcap in pcaps:
         try:
             if pcap.haslayer("IPv6"):
+                ipv6_num+=1
                 if pcap["IPv6"].src not in ndp_table.keys():
                     ndp_table[pcap["IPv6"].src]=pcap["Ethernet"].src
                 else:
@@ -87,34 +115,20 @@ def parasite6(pcaps):
         except:
             continue
     con, cur = dbcur()
-    query = 'update ipv6_attack set ndpspoofer_num= ' + str(countnum) + ' where id=0'
+    print("ndp_detect:"+str(countnum))
+    query_to_update_ipv6_num = 'update pcapsnum set num='+str(ipv6_num)+' where id=1'
+
+    query = 'update attack_check set ipv6_ndp_spoofer_check= ' + str(countnum) + ' where id=0'
     cur.execute(query)
+    cur.execute(query_to_update_ipv6_num)
     con.commit()
     con.close()
-def capture_pcap():
 
-    while True:  # os模块的getpid()可以获得该进程的进程号,os.ppid()可以获得该进程的父进程的进程号
-        # print("---in 子进程1 PID: %d 父进程PID：%d" % (os.getpid(), os.getppid()))
-        # time.sleep(5)
-        pcap = sniff(iface='eth0',timeout=1)
-        # time.sleep(1)
-        FILE = 'demo.pcap'
-        # os.system('sudo tcpdump -i eth0 -G 6  -w /var/tmp/%Y_%m%d_%H%M_%S.pcap ')
-        wrpcap(FILE,pcap)
-        pcaps = rdpcap(FILE)
-        q = multiprocessing.Process(target=analysis_pcap,args=(pcaps,))
-        q.start()
-        # analysis(pcaps)
-        # pcaps = rdpcap(FILE)
-        # analysis(pcaps)
 
 def main():
     p = multiprocessing.Process(target=capture_pcap)
-    p.start()
-    # p2 = multiprocessing.Process(target=test2)
-    # p2.start()
-
     # p.daemon = True
+    p.start()
 
 
 con, cur = dbcur()

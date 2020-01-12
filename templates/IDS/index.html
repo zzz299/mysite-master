@@ -387,7 +387,7 @@
                         var sql=setInterval(
                             function () {
                                 $.ajax({
-                                    url:'/IDS/get_sqlinjection_nums/',//地址
+                                    url:'/IDS/get_attack_nums/',//地址
                                     dataType:'json',//数据类型
                                     type:'GET',//类型
                                     timeout:2000,//超时
@@ -399,15 +399,32 @@
                                             IPv6attack = document.getElementById("IPv6"),
                                             xssnum = document.getElementById("XSS"),
                                             codeinum = document.getElementById("CodeI");
+                                        var check_ipv6_dos = data['check_ipv6_dos'];
+                                        ipv6_dos_src = data['ipv6_dos_src'];
+                                        check_ndpspoofer = data['check_ndpspoofer'];
+                                        check_flood_router6 = data['check_flood_router6'];
+                                        check_tcp_syn = data['tcp_syn_check'];
                                         sqlnum.innerText = data['sqlinum'];
                                         IPv6attack.innerText = data['IPv6'];
                                         xssnum.innerText = data['xssnum'];
                                         codeinum.innerText = data['codeinum'];
+
+                                        if(check_ipv6_dos===1){
+                                            alert("DETECT ipv6_dos from "+ipv6_dos_src+'!');
+                                        }
+                                        if(check_flood_router6===1){
+                                            alert("DETECT ipv6 router flooding!")
+                                        }
+                                        if(check_ndpspoofer===1){
+                                            alert("DETECT ipv6 ndp spoofer!")
+                                        }
+                                        if(check_tcp_syn===1){
+                                            alert("DETECT tcp syn flood!");
+                                        }
                                         //alert(status);
                                     },
                                     //失败/超时
                                     error:function(XMLHttpRequest,textStatus,errorThrown) {
-                                        alert(data);
                                         if (textStatus === 'timeout') {
                                             alert('請求超時');
                                             setTimeout(function () {
@@ -459,19 +476,16 @@
                                                                     activeLastPointToolip(chart);
                                                                     setInterval(function () {
                                                                         $.ajax({
-                                                                        url:'/IDS/testecharts/',//地址
+                                                                        url:'/IDS/getpcap_num/',//地址
                                                                         dataType:'json',//数据类型
                                                                         type:'GET',//类型
                                                                         timeout:2000,//超时
                                                                         //请求成功
 
                                                                         success:function(data,status){
-                                                                            //alert(data);
                                                                             var x = (new Date()).getTime();// 当前时间
-                                                                            //var y = Math.random();          // 随机值
-                                                                            y = data;
-                                                                           // y = Math.random();
-                                                                            y1 = Math.random(1,100);
+                                                                            y = data['tcp_num'];
+                                                                            y1 = data['ipv6_num'];
                                                                             y2 = Math.random(1,100);
                                                                             series2.addPoint([x, y2], true, false);
                                                                             series.addPoint([x, y], true, false);
@@ -801,16 +815,7 @@
                         </div>
 
                     </div>
-                </div> -->
 
-
-
-                <!-- /. ROW  -->
-            </div>
-            <!-- /. PAGE INNER  -->
-        </div>
-        <!-- /. PAGE WRAPPER  -->
-    </div>
     <!-- /. WRAPPER  -->
     <!-- JS Scripts-->
     <!-- jQuery Js -->

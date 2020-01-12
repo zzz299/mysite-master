@@ -1,22 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
-from .models import *
 import random
-from scapy.all import sniff ,wrpcap,rdpcap
+from scapy.all import rdpcap
 import time
 import os
-import _thread
 from django.template import loader
-# from .capture import *
 from .db import *
 import re
-from pyecharts.charts.basic_charts import geo as Geo
 import json
-import IDS.Pcapsnum
-
-from django.core import serializers
-
-# from pyecharts import Bar, Geo
 
 # Create your views here.
 port_list = {22:'SSH',80:'HTTP',53:'DNS'}
@@ -25,37 +16,66 @@ def dbexe(cur,query):
     cur.execute(query)
     return cur.fetchall()
 
-def get_sqlinjection_num(request):
+def get_attack_num(request):
     query1 = 'select count(1) from attack where type="sql-injection"'
+    query2 = 'select count(1) from attack where type="XSS"'
+    query3 = 'select ipv6_router_spoofer_check,ipv6_ndp_spoofer_check from attack_check where id=0'
+    query4 = 'select ipv6_dos_src,ipv6_dos_check,tcp_syn_check from attack_check where id=0'
+
+
     con, cur = dbcur()
     sqli_injection = dbexe(cur, query1)
     sqli_injextion_nums = sqli_injection[0][0]
+
+    xss_injection = dbexe(cur, query2)
+    xss_injextion_nums = xss_injection[0][0]
+
+    ipv6_attack = dbexe(cur,query3)
+    check_flood_router6 = ipv6_attack[0][0]
+    check_ndpspoofer = ipv6_attack[0][1]
+    if(check_ndpspoofer!=0):
+        check_ndpspoofer = 1
+    if(check_flood_router6!=0):
+        check_flood_router6 =1
+
+    ipv6_dos = dbexe(cur,query4)
+    check_ipv6_dos = ipv6_dos[0][1]
+    ipv6_dos_src = ipv6_dos[0][0].decode()
+    tcp_syn_check = ipv6_dos[0][2]
+
+    if(check_ipv6_dos!=0):
+        check_ipv6_dos =1
+    if(tcp_syn_check!=0):
+        tcp_syn_check = 1
+
+    print(check_ipv6_dos,ipv6_dos_src)
+
+
+
     con.commit()
     con.close()
+
     returndata = {
         'sqlinum':sqli_injextion_nums,
         'IPv6':random.randint(1,10),
-        'xssnum':random.randint(1,10),
+        'xssnum':xss_injextion_nums,
         'codeinum':random.randint(1,10),
+        'check_flood_router6': check_flood_router6,
+        'check_ndpspoofer':check_ndpspoofer,
+        'check_ipv6_dos':check_ipv6_dos,
+        'ipv6_dos_src':ipv6_dos_src,
+        'tcp_syn':tcp_syn_check,
     }
     # return HttpResponse(sqli_injextion_nums)
     return HttpResponse(json.dumps(returndata),content_type='application/json')
 
 
-def get_xssinjection_num(request):
-    query2 = 'select count(1) from attack where type="xss"'
-    con, cur = dbcur()
-    xss_injection = dbexe(cur, query2)
-    xss_injextion_nums = xss_injection[0][0]
-    con.commit()
-    con.close()
-    return HttpResponse(xss_injextion_nums)
 
 def index(request):
 #show attack_res
     query = 'select id,time,src,dst,info,type from attack'
     query1 = 'select count(1) from attack where type="sql-injection"'
-    query2 = 'select count(1) from attack where type="xss"'
+    query2 = 'select count(1) from attack where type="XSS"'
     query3 = 'select count(1) from attack where type="code-injection"'
 
     # query4 = 'select count(1) from attack where type="-injection"'
@@ -104,36 +124,10 @@ def add_recode(request):
 
     return 0
 
-# def dealraw(raw):
-#     res = re.findall('([\s\S]*)HTTP/1.1',raw)
-#     if len(res)>0 and res[0]!='\'':
-#         inf = res[0]
-#         if 'POST' in inf:
-#             post = re.findall('\r\n\r\n(.*)',raw)
-#             if len(post)>0:
-#                 inf += ' | '+post[0]
-#     elif '404' in raw:
-#             inf = '404'
-#     elif '302' in raw:
-#         inf = '302'
-#     else:
-#         inf = raw
-#     if inf[0] == "'":
-#         inf = inf[1:]
-#     return inf
-
-
 
 def mysniff(request):
     if request.POST:
         num = int(request.POST['number'])
-
-        # return HttpResponse(os.system('whoami')
-        # ppp = sniff(iface='eth0',count=num)
-        # return HttpResponse('wtf')
-        # if os.path.isdir(FILE):
-        #     os.removedirs(FILE)
-        # # wrpcap(FILE, ppp)
         FILE = 'demo.pcap'
         pcaps = rdpcap(FILE)
         analysis(pcaps)
@@ -181,9 +175,6 @@ def show(request):
     cur.execute(query)
     res = cur.fetchall()
     res = [list(x) for x in res]
-    # query_count = 'select count(1) from pcap'
-    # cur.execute((query_count))
-    # count = cur.fetchall()
     con.commit()
     con.close()
     for i in range(len(res)):
@@ -213,13 +204,10 @@ def analysis(pcaps):
 
     protodic = {'1': 'ICMP', '6': 'TCP', '17': 'UDP'}
     con, cur = dbcur()
-    # cur.execute('delete from pcap')
-    # cur.execute('update sqlite_sequence set seq=0 where name=\'pcap\'')
-    # cur.execute('delete from attack')
-    # cur.execute('update sqlite_sequence set seq=0 where name=\'attack\'')
+
     sql_attack_num = 0
     xss_attack_num = 0
-
+    IPv6_num = 0
     for pcap in pcaps:
         ptime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(pcap.time)))
 
@@ -235,6 +223,8 @@ def analysis(pcaps):
             cur_proto = str(protodic.get(str(pcap.proto), "Other"))
         except:
             cur_proto = "TCP"
+        # if(pcap.haslayer("IPv6")):
+        #     IPv6_num
         try:
             if (b"GET " == info[:4] or b'POST' == info[:4] or b"HTTP" == info[:4]):
                 cur_proto = "HTTP"
@@ -263,10 +253,10 @@ def analysis(pcaps):
 
         results = analysis_http_attack(pcap)
         # print(results)
-        if results!='safe':
+        if results!='safe' or results==None:
             if results[1]=='sql-injection':
                 sql_attack_num+=1
-            elif results[1]=='xss':
+            elif results[1]=='XSS':
                 xss_attack_num+=1
             print('not safe')
             print(results)
@@ -277,8 +267,8 @@ def analysis(pcaps):
                 cur.execute(query1, para1)
             except:
                 pass
-    cur.execute('update sqlattacknum set num= ' + str(sql_attack_num) + ' where id=0')
-    # cur.execute('update xssattacknum set num= ' + str(xss_attack_num) + ' where id=0')
+    cur.execute('update attack_check set sql_attack_num= ' + str(sql_attack_num) + ' where id=0')
+    cur.execute('update attack_check set xss_attack_num= ' + str(xss_attack_num) + ' where id=0')
     con.commit()
     con.close()
 
@@ -300,13 +290,14 @@ def attacklogs(request):
 
 #------------------------detect-sqlinjection----------------------------#
 sql_attack_regx = r'if|is|not|union|like|having|sleep|regexp|ascii|left|select|right|strcmp|substr|limit|instr|benchmark|oct|format|lpad|rpad|\|\||mod|insert|lower|bin|mid|hex|substring|ord|and|field|file|char|in|or|exists|xor|table_schema|where|table_name|column_name|--|`|<|>|<>|\|/|&|{|}|\(|\)|~|sel<>ect|seleselectct|sEleCt|%09|%0a|%0b|%0c|%0d|%20|%a0|information_schema|join'
+xss_attack_regx = r'?|>|<|alert|applet|body|embed|frame|script|frameset|html|iframe|img|style|layer|link|ilayer|meta|object|alertonresize|ondragenter|onreadystatechange|ondrop|onmouseout|onseeked|onseeking|onpageshow|onFocus|oninput|onstorage|onwaiting|onforminput|onpropertychange|onplay|onbeforeunload|ontextmenu|onMouseOver|onpaonpageonpagonpageonpageshowshoweshowshowgeshow|onResize|onblur|ondurationchange|onReadyStateChange|onerror|onratechange|onstart|onqt_error|onselect|onMouseMove|onplaying|onstalled|onmessage|onEnd|onfocus|onPageShow|onload|onloadstart|onBlur|onended|onbeforeload|oncut|onPageHide|onMouseUp|onbegin|onsearch|onUnload|onPopState|ont|onMouseLeave|onsuspend|ondragleave|onchrome|onchange|onwheel|ondragover|onpopstate|onMouseDown|onmousemove|onPropertyChange|onprogress|one|onmouseup|onscroll|ontenteditable|onMouseEnter|oncanplay|ondragend|oncuechange|onclick|ontimeupdate|onfilterchange|onpause|onreset|onBeforeUnload|onloadeddata|onScroll|onshow|oninvalid|onpaste|ononline|onmouseover|ondragstart|onvolumechange|onpagehide|oncopy|onsubmit|onemptied|onoffline|onMouseWheel|onLoad|onhashchange|onunload|ontent|onafterprint|onfinish|onMouseOut|ondrag|onmousedown|onError|onkeydown|ont-size|oncanplaythrough|onStart|onkeyup|oncontextmenu|onmousewheel|ondblclick|onkeypress|onloadedmetadata|onbeforeprint|ontoggle|onabort|'
 
 # def test_sql_attact(request):
 
 
 
 
-def analysis_sql(uri,content):
+def analysis_sql_xss(uri,content):
     print(1)
 
     try:
@@ -322,21 +313,24 @@ def analysis_sql(uri,content):
 
                 result = re.search(sql_attack_regx, req, re.IGNORECASE)
                 if (result!=None):
-                    # print(result)
-                    # print("unsafe")
-                    # print(req)
                     info =  req
                     return info,"sql-injection"
+                else:
+                    result = re.search(xss_attack_regx,req,re.IGNORECASE)
+                    if(result!=None):
+                        info = req
+                        return info,"XSS"
+                    else:
+                        return 'safe'
         except:
             # try:
-            #     # reqs = content.split('&')
-            #     # for req in reqs:
-            #     #     req = req.split('=', 1)[1]
-            #     #     result = re.search(sql_attack_regx, req, re.IGNORECASE)
-            #     #     if (result != None):
-            #     #         info =  req
-            #     #         return info
-            #     # return 'safe'
+            #     reqs = content.split('&')
+            #     for req in reqs:
+            #         req = req.split('=', 1)[1]
+            #         result = re.search(sql_attack_regx, req, re.IGNORECASE)
+            #         if (result != None):
+            #             info =  req
+            #             return info
             #     return 'safe'
             # except:
             #     return 'safe'
@@ -348,99 +342,81 @@ def analysis_sql(uri,content):
 
 def analysis_http_attack(i):
     if i.haslayer('TCP'):
-        # try:
-        #     source=i['IP'].src
-        #     destination = i['IP'].dst
-        #     seq = i['TCP'].seq
-        #     ack = i['TCP'].ack
-        #     window = i['TCP'].window
-        # except:
-        #     source = i['IPv6'].src
-        #     destination = i['IPv6'].dst
-        #
-        # sport=i['TCP'].sport
-        # dport=i['TCP'].dport
+        try:
+            source=i['IP'].src
+            destination = i['IP'].dst
+            seq = i['TCP'].seq
+            ack = i['TCP'].ack
+            window = i['TCP'].window
+        except:
+            source = i['IPv6'].src
+            destination = i['IPv6'].dst
 
-        if(i.haslayer('Raw')):
+        sport=i['TCP'].sport
+        dport=i['TCP'].dport
 
-            type='GET'
-            raw = i['Raw'].load
-            if (b"GET " == i['Raw'].load[:4] or b'POST' == i['Raw'].load[:4]):
-                # if b"GET " == raw[:4] or b'POST' == raw[:4]:
-                if b'POST' == i['Raw'].load[:4]:
-                    type='POST'
+        try:
+            if(i.haslayer('Raw')):
 
-                info = str(raw).split("\r\n")
-                uri = info[0].split(" ")[1]
-                content = info[-1]
-                other_info_dict = dict((x.split(":")[0], x.split(":")[1]) for x in info[1:] if ":" in x)
-                host = ""
-                if "Host" in other_info_dict:
-                    host = other_info_dict["Host"]
+                type='GET'
+                raw = i['Raw'].load
+                if (b"GET " == i['Raw'].load[:4] or b'POST' == i['Raw'].load[:4]):
+                    # if b"GET " == raw[:4] or b'POST' == raw[:4]:
+                    if b'POST' == i['Raw'].load[:4]:
+                        type='POST'
 
-                type='http'
-                headers=other_info_dict
-                print(uri)
-                content=content
+                    info = str(raw).split("\r\n")
+                    uri = info[0].split(" ")[1]
+                    content = info[-1]
+                    other_info_dict = dict((x.split(":")[0], x.split(":")[1]) for x in info[1:] if ":" in x)
+                    host = ""
+                    if "Host" in other_info_dict:
+                        host = other_info_dict["Host"]
 
-                # print(http_req)
-                print("analysis sql")
-                results = analysis_sql(uri=uri,content=content)
-                print(results)
-                xss = 0
-                if results!='safe':
+                    type='http'
+                    headers=other_info_dict
+                    print(uri)
+                    content=content
+
+                    # print(http_req)
+                    print("analysis sql")
+                    results = analysis_sql_xss(uri=uri,content=content)
                     print(results)
-                    return results
-                return 'safe'
+                    xss = 0
+                    if results!='safe':
+                        print(results)
+                        return results
+                    return 'safe'
+                else:
+                    return 'safe'
             else:
                 return 'safe'
-        else:
+        except:
             return 'safe'
     else:
         return 'safe'
 #------------------------detect-sqlinjection----------------------------#
 
 
-
-def test_ajax_add(request):
-    # n = request.GET.get('number')
-    query = 'select id,time,proto,src,dst from pcap'
-    con, cur = dbcur()
-    cur.execute(query)
-    res = cur.fetchall()
-    res = [list(x) for x in res]
-    con.commit()
-    con.close()
-    for i in range(len(res)):
-        for j in range(1, len(res[i])):
-            res[i][j] = res[i][j].decode()
-
-    return render(request,"IDS/test_ajax.html",{'pcaps':res})
-
-def test_ajax(request):
-    # return render(request,"aaaa")
-
-    return HttpResponse('aaa')
-
-
-# def telnet_monitor(pkt):
-
-def testecharts(request):
-    # return HttpResponse(json.dumps(data),content_type='application/json')
-    # f = open('pcapsnum')
-    # nums = int(f.readline())
-    # print(nums)
-
+def getpcap_num(request):
     con, cur = dbcur()
     query = 'select num from pcapsnum where id=0'
+    query2 = 'select num from pcapsnum where id=1'
+
     cur.execute(query)
-    # print(query)
-    PCAPNUMS = cur.fetchall()[0][0]
-    # print(PCAPNUMS)
+    tcp_num = cur.fetchall()[0][0]
+    cur.execute(query2)
+    ipv6_num = cur.fetchall()[0][0]
+
+    if(tcp_num>=1000):
+        query1 = 'update attack_check set tcp_syn_check=1 where id=0'
+        cur.execute(query1)
+
+    PCAPNUM = {
+        'tcp_num':tcp_num,
+        'ipv6_num':random.randint(0,tcp_num)
+    }
     con.commit()
     con.close()
 
-    return HttpResponse(PCAPNUMS)
-# capture()
-
-# def
+    return HttpResponse(json.dumps(PCAPNUM),content_type='application/json')
