@@ -6,7 +6,7 @@ import sqlite3
 
 def dbcur():
     # con = sqlite3.connect(os.path.join(os.getcwd(),'db.sqlite3'))
-    con = sqlite3.connect('/root/PycharmProjects/mysite/db.sqlite3') #修改为自己的地址
+    con = sqlite3.connect('/root/mysite-master/db.sqlite3') #修改为自己的地址
     con.text_factory = bytes
     return con,con.cursor()
 

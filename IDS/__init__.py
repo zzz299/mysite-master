@@ -4,7 +4,32 @@ import multiprocessing
 import time
 import operator
 from .views import analysis_http_attack,analysis
-
+import socket
+import ssl
+from easygui import *
+class server_ssl:
+    def bulid_listen(self):
+        sock = socket.socket()
+        print("建立套接字成功")
+        sock.bind(("127.0.0.2", 10002))
+        print("绑定成功")
+        sock.listen(1)
+        text = ""
+        while True:
+            conn, addr = sock.accept()
+            # print("客户端的套接字数据接收到了")
+            connstream = ssl.wrap_socket(conn, "keyy.pem", "certt.pem", server_side=True)
+            try:
+                data = connstream.recv(1024).decode("utf-8")
+                text = text + "客户端:" + str(data) + "\r\n" + "服务端:"
+                msg = enterbox(msg=text, title="服务端")
+                text = text + msg + "\r\n"
+                msg = msg.encode(encoding="utf-8")
+                connstream.send(msg)
+            except:
+                #connstream.shutdown(socket.SHUT_RDWR)
+                connstream.close()
+                text=""
 def analysis_pcap(pcaps):
     PCAPNUMS = len(pcaps)
     con, cur = dbcur()
@@ -127,11 +152,15 @@ def parasite6(pcaps):
     con.commit()
     con.close()
 
-
+def openssl():
+    server=server_ssl()
+    server.bulid_listen()
 def main():
     p = multiprocessing.Process(target=capture_pcap)
     # p.daemon = True
     p.start()
+    s=multiprocessing.Process(target=openssl)
+    s.start()
 
 
 con, cur = dbcur()
