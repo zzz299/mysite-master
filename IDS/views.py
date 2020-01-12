@@ -19,7 +19,7 @@ def dbexe(cur,query):
 def get_attack_num(request):
     query1 = 'select count(1) from attack where type="sql-injection"'
     query2 = 'select count(1) from attack where type="XSS"'
-    query3 = 'select ipv6_router_spoofer_check,ipv6_ndp_spoofer_check from attack_check where id=0'
+    query3 = 'select ipv6_flood_num,ipv6_ndp_spoofer_check from attack_check where id=0'
     query4 = 'select ipv6_dos_src,ipv6_dos_check,tcp_syn_check from attack_check where id=0'
 
 
@@ -31,12 +31,12 @@ def get_attack_num(request):
     xss_injextion_nums = xss_injection[0][0]
 
     ipv6_attack = dbexe(cur,query3)
-    check_flood_router6 = ipv6_attack[0][0]
+    check_flood_num = ipv6_attack[0][0]
     check_ndpspoofer = ipv6_attack[0][1]
     if(check_ndpspoofer!=0):
         check_ndpspoofer = 1
-    if(check_flood_router6!=0):
-        check_flood_router6 =1
+    if(check_flood_num!=0):
+        check_flood_num =1
 
     ipv6_dos = dbexe(cur,query4)
     check_ipv6_dos = ipv6_dos[0][1]

@@ -3,7 +3,7 @@ from IDS.db import *
 import multiprocessing
 import time
 import operator
-from .views import analysis_http_attack,analysis,analysis_sql
+from .views import analysis_http_attack,analysis
 
 def analysis_pcap(pcaps):
     PCAPNUMS = len(pcaps)
@@ -64,9 +64,9 @@ def test_ipv6dos(pcaps):
         if count==1:
             break
 
-    flood_router6(pcaps)
+    flood(pcaps)
 
-def flood_router6(pcaps):
+def flood(pcaps):
     sumnum=len(pcaps)
     countnum=0
     for pcap in pcaps:
@@ -74,6 +74,9 @@ def flood_router6(pcaps):
             try:
                 if pcap.haslayer("ICMPv6ND_RA"):
                     if pcap["IPv6"].dst=="ff02::1" and pcap["ICMPv6ND_RA"].type==134:
+                        countnum=countnum+1
+                elif pcap.haslayer("ICMPv6ND.NS"):
+                    if pcap["IPv6"].dst == "ff02::1" and pcap["ICMPv6ND_NS"].type == 135:
                         countnum=countnum+1
             except:
                 continue
