@@ -17,7 +17,6 @@ class server_ssl:
         text = ""
         while True:
             conn, addr = sock.accept()
-            # print("客户端的套接字数据接收到了")
             connstream = ssl.wrap_socket(conn, "keyy.pem", "certt.pem", server_side=True)
             try:
                 data = connstream.recv(1024).decode("utf-8")
@@ -27,7 +26,6 @@ class server_ssl:
                 msg = msg.encode(encoding="utf-8")
                 connstream.send(msg)
             except:
-                #connstream.shutdown(socket.SHUT_RDWR)
                 connstream.close()
                 text=""
 def analysis_pcap(pcaps):

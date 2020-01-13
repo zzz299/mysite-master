@@ -104,8 +104,24 @@ def judge(pcap):
         elif pcap["IPv6"].nh==58:
             icmpv6=icmp(pcap)
             print("icmpv6", icmpv6)
+def arp(pcap):
+    ptype = {"0x800": "IPv4"}
+    option = {1: "who-has", 2: "is-at"}
+    arp = dict()
+    arp["Hardware type"] = hex(p["ARP"].hwtype)
+    arp["Protocol type"] = ptype[hex(p["ARP"].ptype)]
+    arp["Harware lenght"] = p["ARP"].hwlen
+    arp["Protocol lengt"] = p["ARP"].plen
+    arp["Operation"] = option[p["ARP"].op]
+    arp["Sender hardware address"] = p["ARP"].hwsrc
+    arp["Sender protocol address"] = p["ARP"].psrc
+    arp["Target hardware address"] = p["ARP"].hwdst
+    arp["Target protocol address"] = p["ARP"].hwdst
+    print("arp:", arp)
 while(True):
     pcap=sniff(iface="eth0",count=10)
     for p in pcap:
         if p.haslayer("IPv6"):
             judge(p)
+        if p.haslayer("ARP"):
+            arp(p)
