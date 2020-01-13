@@ -4,6 +4,7 @@ import multiprocessing
 import time
 import operator
 from .views import analysis_http_attack,analysis
+
 import socket
 import ssl
 from easygui import *
@@ -28,6 +29,7 @@ class server_ssl:
             except:
                 connstream.close()
                 text=""
+
 def analysis_pcap(pcaps):
     PCAPNUMS = len(pcaps)
     con, cur = dbcur()
@@ -40,7 +42,7 @@ def analysis_pcap(pcaps):
 
 def capture_pcap():
 
-    for i in range(100):  # os模块的getpid()可以获得该进程的进程号,os.ppid()可以获得该进程的父进程的进程号
+    for i in range(300):  # os模块的getpid()可以获得该进程的进程号,os.ppid()可以获得该进程的父进程的进程号
         print("---in %d" % (i))
         pcap = sniff(iface='eth0',timeout=1)
         FILE = 'demo.pcap'
@@ -116,6 +118,7 @@ def flood(pcaps):
         con.commit()
         con.close()
 
+
     parasite6(pcaps)
 
 
@@ -124,9 +127,11 @@ def parasite6(pcaps):
     ndpmac_table=dict()
     countnum=0
     ipv6_num = 0
+    src = ''
     for pcap in pcaps:
         try:
             if pcap.haslayer("IPv6"):
+                src = pcap["IPv6"].src
                 ipv6_num+=1
                 if pcap["IPv6"].src not in ndp_table.keys():
                     ndp_table[pcap["IPv6"].src]=pcap["Ethernet"].src
@@ -141,23 +146,46 @@ def parasite6(pcaps):
         except:
             continue
     con, cur = dbcur()
-    print("ndp_detect:"+str(countnum))
-    query_to_update_ipv6_num = 'update pcapsnum set num='+str(ipv6_num)+' where id=1'
+    print("[+] ndp_detect:"+str(countnum))
+    print("[+] ipv6_num: ", str(ipv6_num))
+    if(ipv6_num>1000):
+        query = "update attack_check set ipv6_dos_src='"+str(src)+"',ipv6_dos_check=1 where id=0"
+        cur.execute(query)
+    else:
+        query = 'update pcapsnum set num='+str(ipv6_num)+' where id=1'
+        cur.execute(query)
 
     query = 'update attack_check set ipv6_ndp_spoofer_check= ' + str(countnum) + ' where id=0'
     cur.execute(query)
-    cur.execute(query_to_update_ipv6_num)
     con.commit()
     con.close()
-
+def arppar(pcaps):
+    countnum=0
+    arp_table=dict()
+    for p in pcaps:
+        try:
+            if p.haslayer("ARP"):
+                if p["ARP"].psrc not in arp_table.keys():
+                    arp_table[p["ARP"].psrc]=p["ARP"].hwsrc
+                else:
+                    if arp_table[p["ARP"].psrc]!=p["ARP"].hwsrc:
+                        countnum=countnum+1
+        except:
+            continue
+    con, cur = dbcur()
+    query = 'update attack_check set arp_spoofer_check= ' + str(countnum) + ' where id=0'
+    cur.execute(query)
+    con.commit()
+    con.close()
 def openssl():
     server=server_ssl()
     server.bulid_listen()
+
 def main():
     p = multiprocessing.Process(target=capture_pcap)
     # p.daemon = True
     p.start()
-    s=multiprocessing.Process(target=openssl)
+    s = multiprocessing.Process(target=openssl)
     s.start()
 
 

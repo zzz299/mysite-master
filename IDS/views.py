@@ -31,40 +31,43 @@ def get_attack_num(request):
     xss_injextion_nums = xss_injection[0][0]
 
     ipv6_attack = dbexe(cur,query3)
-    check_flood_num = ipv6_attack[0][0]
+    check_flood_router6 = ipv6_attack[0][0]
     check_ndpspoofer = ipv6_attack[0][1]
+
     if(check_ndpspoofer!=0):
         check_ndpspoofer = 1
-    if(check_flood_num!=0):
-        check_flood_num =1
+    if(check_flood_router6!=0):
+        check_flood_router6 =1
 
     ipv6_dos = dbexe(cur,query4)
     check_ipv6_dos = ipv6_dos[0][1]
     ipv6_dos_src = ipv6_dos[0][0].decode()
     tcp_syn_check = ipv6_dos[0][2]
+    print("[+] tcp_syn_check :",tcp_syn_check)
+    print("[+] ipv6_flood_check :",check_ipv6_dos)
 
     if(check_ipv6_dos!=0):
         check_ipv6_dos =1
     if(tcp_syn_check!=0):
         tcp_syn_check = 1
 
-    print(check_ipv6_dos,ipv6_dos_src)
+    # print(check_ipv6_dos,ipv6_dos_src)
 
-
+    check_ndpspoofer = 0
 
     con.commit()
     con.close()
 
     returndata = {
         'sqlinum':sqli_injextion_nums,
-        'IPv6':random.randint(1,10),
+        'IPv6':check_flood_router6,
         'xssnum':xss_injextion_nums,
-        'codeinum':random.randint(1,10),
-        'check_flood_router6': check_flood_num,
+        'codeinum':0,
+        'check_flood_router6': check_flood_router6,
         'check_ndpspoofer':check_ndpspoofer,
         'check_ipv6_dos':check_ipv6_dos,
         'ipv6_dos_src':ipv6_dos_src,
-        'tcp_syn':tcp_syn_check,
+        'tcp_syn_check':tcp_syn_check,
     }
     # return HttpResponse(sqli_injextion_nums)
     return HttpResponse(json.dumps(returndata),content_type='application/json')
@@ -256,8 +259,10 @@ def analysis(pcaps):
         if results!='safe' or results==None:
             if results[1]=='sql-injection':
                 sql_attack_num+=1
+                print("[+] SQLinjection + 1")
             elif results[1]=='XSS':
                 xss_attack_num+=1
+                print("[+] XSSinjection + 1")
             print('not safe')
             print(results)
             try:
@@ -267,6 +272,9 @@ def analysis(pcaps):
                 cur.execute(query1, para1)
             except:
                 pass
+
+    print("[+] XSS_attack_num:",xss_attack_num)
+    print("[+] SQL_attack_num:", sql_attack_num)
     cur.execute('update attack_check set sql_attack_num= ' + str(sql_attack_num) + ' where id=0')
     cur.execute('update attack_check set xss_attack_num= ' + str(xss_attack_num) + ' where id=0')
     con.commit()
@@ -289,8 +297,8 @@ def attacklogs(request):
     return HttpResponse(template.render({'pcaps':result}),request)
 
 #------------------------detect-sqlinjection----------------------------#
-sql_attack_regx = r'if|is|not|union|like|having|sleep|regexp|ascii|left|select|right|strcmp|substr|limit|instr|benchmark|oct|format|lpad|rpad|\|\||mod|insert|lower|bin|mid|hex|substring|ord|and|field|file|char|in|or|exists|xor|table_schema|where|table_name|column_name|--|`|<|>|<>|\|/|&|{|}|\(|\)|~|sel<>ect|seleselectct|sEleCt|%09|%0a|%0b|%0c|%0d|%20|%a0|information_schema|join'
-xss_attack_regx = r'?|>|<|alert|applet|body|embed|frame|script|frameset|html|iframe|img|style|layer|link|ilayer|meta|object|alertonresize|ondragenter|onreadystatechange|ondrop|onmouseout|onseeked|onseeking|onpageshow|onFocus|oninput|onstorage|onwaiting|onforminput|onpropertychange|onplay|onbeforeunload|ontextmenu|onMouseOver|onpaonpageonpagonpageonpageshowshoweshowshowgeshow|onResize|onblur|ondurationchange|onReadyStateChange|onerror|onratechange|onstart|onqt_error|onselect|onMouseMove|onplaying|onstalled|onmessage|onEnd|onfocus|onPageShow|onload|onloadstart|onBlur|onended|onbeforeload|oncut|onPageHide|onMouseUp|onbegin|onsearch|onUnload|onPopState|ont|onMouseLeave|onsuspend|ondragleave|onchrome|onchange|onwheel|ondragover|onpopstate|onMouseDown|onmousemove|onPropertyChange|onprogress|one|onmouseup|onscroll|ontenteditable|onMouseEnter|oncanplay|ondragend|oncuechange|onclick|ontimeupdate|onfilterchange|onpause|onreset|onBeforeUnload|onloadeddata|onScroll|onshow|oninvalid|onpaste|ononline|onmouseover|ondragstart|onvolumechange|onpagehide|oncopy|onsubmit|onemptied|onoffline|onMouseWheel|onLoad|onhashchange|onunload|ontent|onafterprint|onfinish|onMouseOut|ondrag|onmousedown|onError|onkeydown|ont-size|oncanplaythrough|onStart|onkeyup|oncontextmenu|onmousewheel|ondblclick|onkeypress|onloadedmetadata|onbeforeprint|ontoggle|onabort|'
+sql_attack_regx = r'if|is|not|union|like|having|sleep|regexp|ascii|left|select|right|strcmp|substr|limit|instr|benchmark|oct|format|lpad|rpad|\|\||mod|insert|lower|bin|mid|hex|substring|ord|and|field|file|char|in|or|exists|xor|table_schema|where|table_name|column_name|--|`|<>|\|/|&|{|}|\(|\)|~|sel<>ect|seleselectct|sEleCt|%09|%0a|%0b|%0c|%0d|%20|%a0|information_schema|join'
+xss_attack_regx = r'>|<|alert|applet|body|embed|frame|script|frameset|html|iframe|img|style|layer|link|ilayer|meta|object|alertonresize|ondragenter|onreadystatechange|ondrop|onmouseout|onseeked|onseeking|onpageshow|onFocus|oninput|onstorage|onwaiting|onforminput|onpropertychange|onplay|onbeforeunload|ontextmenu|onMouseOver|onpaonpageonpagonpageonpageshowshoweshowshowgeshow|onResize|onblur|ondurationchange|onReadyStateChange|onerror|onratechange|onstart|onqt_error|onselect|onMouseMove|onplaying|onstalled|onmessage|onEnd|onfocus|onPageShow|onload|onloadstart|onBlur|onended|onbeforeload|oncut|onPageHide|onMouseUp|onbegin|onsearch|onUnload|onPopState|ont|onMouseLeave|onsuspend|ondragleave|onchrome|onchange|onwheel|ondragover|onpopstate|onMouseDown|onmousemove|onPropertyChange|onprogress|one|onmouseup|onscroll|ontenteditable|onMouseEnter|oncanplay|ondragend|oncuechange|onclick|ontimeupdate|onfilterchange|onpause|onreset|onBeforeUnload|onloadeddata|onScroll|onshow|oninvalid|onpaste|ononline|onmouseover|ondragstart|onvolumechange|onpagehide|oncopy|onsubmit|onemptied|onoffline|onMouseWheel|onLoad|onhashchange|onunload|ontent|onafterprint|onfinish|onMouseOut|ondrag|onmousedown|onError|onkeydown|ont-size|oncanplaythrough|onStart|onkeyup|oncontextmenu|onmousewheel|ondblclick|onkeypress|onloadedmetadata|onbeforeprint|ontoggle|onabort'
 
 # def test_sql_attact(request):
 
@@ -298,7 +306,6 @@ xss_attack_regx = r'?|>|<|alert|applet|body|embed|frame|script|frameset|html|ifr
 
 
 def analysis_sql_xss(uri,content):
-    print(1)
 
     try:
         reqs = uri.split('?',1)[1]
@@ -311,15 +318,18 @@ def analysis_sql_xss(uri,content):
             for req in reqs:
                 req = req.split('=',1)[1]
 
-                result = re.search(sql_attack_regx, req, re.IGNORECASE)
+                result = re.search(xss_attack_regx, req, re.IGNORECASE)
                 if (result!=None):
                     info =  req
-                    return info,"sql-injection"
+                    print("[+] analysis xss")
+                    return info,"XSS"
                 else:
-                    result = re.search(xss_attack_regx,req,re.IGNORECASE)
+                    print("[+] analysis sql")
+                    result = re.search(sql_attack_regx,req,re.IGNORECASE)
+                    # print(result)
                     if(result!=None):
                         info = req
-                        return info,"XSS"
+                        return info,"sql-injection"
                     else:
                         return 'safe'
         except:
@@ -375,16 +385,16 @@ def analysis_http_attack(i):
 
                     type='http'
                     headers=other_info_dict
-                    print(uri)
+                    # print(uri)
                     content=content
 
                     # print(http_req)
-                    print("analysis sql")
+
                     results = analysis_sql_xss(uri=uri,content=content)
-                    print(results)
+
                     xss = 0
                     if results!='safe':
-                        print(results)
+                        # print(results)
                         return results
                     return 'safe'
                 else:
@@ -411,10 +421,13 @@ def getpcap_num(request):
     if(tcp_num>=1000):
         query1 = 'update attack_check set tcp_syn_check=1 where id=0'
         cur.execute(query1)
+    else:
+        query1 = 'update attack_check set tcp_syn_check=0 where id=0'
+        cur.execute(query1)
 
     PCAPNUM = {
         'tcp_num':tcp_num,
-        'ipv6_num':random.randint(0,tcp_num)
+        'ipv6_num': ipv6_num
     }
     con.commit()
     con.close()
