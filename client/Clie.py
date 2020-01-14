@@ -4,7 +4,7 @@ class client_ssl():
         while True:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             ssl_s = ssl.wrap_socket(s, cert_reqs=ssl.CERT_REQUIRED, ca_certs="certt.pem")
-            ssl_s.connect(("127.0.0.1", 10002))
+            ssl_s.connect(("127.0.0.2", 10002))
             try:
                 print("客户端：")
                 msg = input()
@@ -16,7 +16,7 @@ class client_ssl():
                         a=a-1
                     ssl_s.shutdown(socket.SHUT_WR)
                     ssl_s.close()
-                    time.sleep(10)
+                    #time.sleep(10)
                     break
                 data = ssl_s.recv(1024).decode("utf-8")
                 print("服务端：")

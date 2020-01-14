@@ -244,11 +244,11 @@ def analysis(pcaps):
         try:
             srcip = str(pcap['IP'].src)
         except:
-            srcip = "Unknow"
+            srcip = str(pcap["IPv6"].src)
         try:
             dstip = str(pcap["IP"].dst)
         except:
-            dstip = "Unknow"
+            dstip = str(pcap["IPv6"].dst)
 
         para = (ptime, cur_proto, srcip, dstip, cur_sp, cur_dp, info)
         cur.execute(query, para)

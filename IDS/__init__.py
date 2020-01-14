@@ -154,11 +154,14 @@ def parasite6(pcaps):
     else:
         query = 'update pcapsnum set num='+str(ipv6_num)+' where id=1'
         cur.execute(query)
+        query = "update attack_check set ipv6_dos_check=0 where id=0"
+        cur.execute(query)
 
     query = 'update attack_check set ipv6_ndp_spoofer_check= ' + str(countnum) + ' where id=0'
     cur.execute(query)
     con.commit()
     con.close()
+    arppar(pcaps)
 def arppar(pcaps):
     countnum=0
     arp_table=dict()
@@ -190,9 +193,9 @@ def main():
 
 
 con, cur = dbcur()
-cur.execute('delete from pcap')
+cur.execute('delete from pcap where 1=1')
 cur.execute('update sqlite_sequence set seq=0 where name=\'pcap\'')
-cur.execute('delete from attack')
+cur.execute('delete from attack where 1=1')
 cur.execute('update sqlite_sequence set seq=0 where name=\'attack\'')
 con.commit()
 con.close()
